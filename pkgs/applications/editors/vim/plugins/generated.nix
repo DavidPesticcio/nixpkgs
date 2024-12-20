@@ -2465,18 +2465,6 @@ final: prev:
     meta.homepage = "https://github.com/Exafunction/codeium.vim/";
   };
 
-  codesnap-nvim = buildVimPlugin {
-    pname = "codesnap.nvim";
-    version = "2024-09-22";
-    src = fetchFromGitHub {
-      owner = "mistricky";
-      repo = "codesnap.nvim";
-      rev = "6400480aa6cc366cbd931146c429aaa64680dab9";
-      sha256 = "1kdqh5vn837pxygz141n01zw08apcxi39xzdn5a0zhddimqn16z1";
-    };
-    meta.homepage = "https://github.com/mistricky/codesnap.nvim/";
-  };
-
   codewindow-nvim = buildVimPlugin {
     pname = "codewindow.nvim";
     version = "2024-06-05";
@@ -9531,18 +9519,6 @@ final: prev:
       sha256 = "0fvxnx5ji3d4kgsxl2ssqs7s567ibk4h38mz70m3nhs3sxk696lj";
     };
     meta.homepage = "https://github.com/lucidph3nx/nvim-sops/";
-  };
-
-  nvim-spectre = buildVimPlugin {
-    pname = "nvim-spectre";
-    version = "2024-10-27";
-    src = fetchFromGitHub {
-      owner = "nvim-pack";
-      repo = "nvim-spectre";
-      rev = "08be31c104df3b4b049607694ebb2b6ced4f928b";
-      sha256 = "04v1gypga9fhmkddis5yyppvmpq0b1b7zpvbfjlxfp2z498l5n2v";
-    };
-    meta.homepage = "https://github.com/nvim-pack/nvim-spectre/";
   };
 
   nvim-spider = buildVimPlugin {

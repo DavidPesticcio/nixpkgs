@@ -72,9 +72,6 @@
   zsh,
   # codeium-nvim dependencies
   codeium,
-  # codesnap-nvim dependencies
-  clang,
-  libuv,
   # command-t dependencies
   getconf,
   ruby,
@@ -678,62 +675,7 @@ in
       nvimRequireCheck = "codeium";
     };
 
-  codesnap-nvim =
-    let
-      version = "1.6.1";
-      src = fetchFromGitHub {
-        owner = "mistricky";
-        repo = "codesnap.nvim";
-        rev = "refs/tags/v${version}";
-        hash = "sha256-OmSgrTYDtNb2plMyzjVvxGrfXB/lGKDpUQhpRqKfAMA=";
-      };
-      codesnap-lib = rustPlatform.buildRustPackage {
-        pname = "codesnap-lib";
-        inherit version src;
-
-        sourceRoot = "${src.name}/generator";
-
-        cargoHash = "sha256-6n37n8oHIHrz3S1+40nuD0Ud3l0iNgXig1ZwrgsnYTI=";
-
-        nativeBuildInputs = [
-          pkg-config
-          rustPlatform.bindgenHook
-        ];
-
-        buildInputs =
-          [
-            libuv.dev
-          ]
-          ++ lib.optionals stdenv.hostPlatform.isDarwin [
-            darwin.apple_sdk.frameworks.AppKit
-          ];
-      };
-    in
-    buildVimPlugin {
-      pname = "codesnap.nvim";
-      inherit version src;
-
-      # - Remove the shipped pre-built binaries
-      # - Copy the resulting binary from the codesnap-lib derivation
-      # Note: the destination should be generator.so, even on darwin
-      # https://github.com/mistricky/codesnap.nvim/blob/main/scripts/build_generator.sh
-      postInstall =
-        let
-          extension = if stdenv.hostPlatform.isDarwin then "dylib" else "so";
-        in
-        ''
-          rm -r $out/lua/*.so
-          cp ${codesnap-lib}/lib/libgenerator.${extension} $out/lua/generator.so
-        '';
-
-      doInstallCheck = true;
-      nvimRequireCheck = "codesnap";
-
-      meta = {
-        homepage = "https://github.com/mistricky/codesnap.nvim/";
-        changelog = "https://github.com/mistricky/codesnap.nvim/releases/tag/v${version}";
-      };
-    };
+  codesnap-nvim = callPackage ./codesnap-nvim { };
 
   codewindow-nvim = super.codewindow-nvim.overrideAttrs {
     dependencies = [ self.nvim-treesitter ];
@@ -1760,40 +1702,7 @@ in
     ];
   };
 
-  moveline-nvim =
-    let
-      version = "2024-07-25";
-      src = fetchFromGitHub {
-        owner = "willothy";
-        repo = "moveline.nvim";
-        rev = "9f67f4b9e752a87eea8205f0279f261a16c733d8";
-        sha256 = "sha256-B4t5+Q4Urx5bGm8glNpYkHhpp/rAhz+lDd2EpWFUYoY=";
-      };
-      moveline-lib = rustPlatform.buildRustPackage {
-        inherit src version;
-        pname = "moveline-lib";
-        cargoHash = "sha256-e9QB4Rfm+tFNrLAHN/nYUQ5PiTET8knQQIQkMH3UFkU=";
-      };
-    in
-    buildVimPlugin {
-      inherit src version;
-      pname = "moveline-nvim";
-      preInstall = ''
-        mkdir -p lua
-        ln -s ${moveline-lib}/lib/libmoveline.so lua/moveline.so
-      '';
-      meta = {
-        description = "Neovim plugin for moving lines up and down";
-        homepage = "https://github.com/willothy/moveline.nvim";
-        license = lib.licenses.mit;
-        maintainers = with lib.maintainers; [ redxtech ];
-        badPlatforms = [
-          "aarch64-darwin"
-          "x86_64-darwin"
-        ];
-      };
-      nvimRequireCheck = "moveline";
-    };
+  moveline-nvim = callPackage ./moveline-nvim { };
 
   multicursors-nvim = super.multicursors-nvim.overrideAttrs {
     dependencies = with self; [
@@ -2362,35 +2271,6 @@ in
     buildInputs = [ ripgrep ];
   };
 
-  nvim-spectre = super.nvim-spectre.overrideAttrs (
-    old:
-    let
-      spectre_oxi = rustPlatform.buildRustPackage {
-        pname = "spectre_oxi";
-        inherit (old) version src;
-        sourceRoot = "${old.src.name}/spectre_oxi";
-
-        cargoHash = "sha256-yYUbfqkICsGDKexYjfhXfpIoT1+QrZQJPpKzk+gwm+s=";
-
-        preCheck = ''
-          mkdir tests/tmp/
-        '';
-
-        checkFlags = [
-          # Flaky test (https://github.com/nvim-pack/nvim-spectre/issues/244)
-          "--skip=tests::test_replace_simple"
-        ];
-      };
-    in
-    {
-      dependencies = [ self.plenary-nvim ];
-      postInstall = ''
-        ln -s ${spectre_oxi}/lib/libspectre_oxi.* $out/lua/spectre_oxi.so
-      '';
-      nvimRequireCheck = "spectre";
-    }
-  );
-
   nvim-scissors = super.nvim-scissors.overrideAttrs {
     nvimRequireCheck = "scissors";
   };
@@ -2399,6 +2279,8 @@ in
     # Optional cmp integration
     nvimSkipModule = "snippets.utils.cmp";
   };
+
+  nvim-spectre = callPackage ./nvim-spectre { };
 
   nvim-surround = super.nvim-surround.overrideAttrs {
     # Optional treesitter integration
@@ -2863,62 +2745,7 @@ in
     ];
   };
 
-  sniprun =
-    let
-      version = "1.3.16";
-      src = fetchFromGitHub {
-        owner = "michaelb";
-        repo = "sniprun";
-        rev = "refs/tags/v${version}";
-        hash = "sha256-2rVeBUkdLXUiHkd8slyiLTYQBKwgMQvIi/uyCToVBYA=";
-      };
-      sniprun-bin = rustPlatform.buildRustPackage {
-        pname = "sniprun-bin";
-        inherit version src;
-
-        buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [
-          darwin.apple_sdk.frameworks.Security
-        ];
-
-        cargoHash = "sha256-eZcWS+DWec0V9G6hBnZRUNcb3uZeSiBhn4Ed9KodFV8=";
-
-        nativeBuildInputs = [ makeWrapper ];
-
-        postInstall = ''
-          wrapProgram $out/bin/sniprun \
-            --prefix PATH ${
-              lib.makeBinPath [
-                bashInteractive
-                coreutils
-                curl
-                gnugrep
-                gnused
-                procps
-              ]
-            }
-        '';
-
-        doCheck = false;
-      };
-    in
-    buildVimPlugin {
-      pname = "sniprun";
-      inherit version src;
-
-      patches = [ ./patches/sniprun/fix-paths.patch ];
-      postPatch = ''
-        substituteInPlace lua/sniprun.lua --replace '@sniprun_bin@' ${sniprun-bin}
-      '';
-
-      propagatedBuildInputs = [ sniprun-bin ];
-
-      meta = {
-        homepage = "https://github.com/michaelb/sniprun/";
-        changelog = "https://github.com/michaelb/sniprun/blob/v${version}/CHANGELOG.md";
-        maintainers = with lib.maintainers; [ GaetanLepage ];
-      };
-      nvimRequireCheck = "sniprun";
-    };
+  sniprun = callPackage ./sniprun { };
 
   # The GitHub repository returns 404, which breaks the update script
   Spacegray-vim = buildVimPlugin {
