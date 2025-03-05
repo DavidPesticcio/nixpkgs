@@ -3,6 +3,8 @@
   lib,
   fetchurl,
   pkg-config,
+
+  cdrdao,
   gtk3,
   itstool,
   gst_all_1,
@@ -41,9 +43,11 @@ stdenv.mkDerivation rec {
     itstool
     intltool
     wrapGAppsHook3
+    cdrdao
   ];
 
   buildInputs = [
+    cdrdao
     gtk3
     libxml2
     libnotify
