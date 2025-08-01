@@ -2,7 +2,6 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  pkgs,
 
   boca, # Required for freac
   smooth, # Required for boca
@@ -59,44 +58,43 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   nativeBuildInputs = [
-    pkgs.boca # Required for freac
-    pkgs.smooth # Required for boca
-    pkgs.systemd
+    boca # Required for freac
+    smooth # Required for boca
+    systemd
 
-    pkgs.curl
-    pkgs.gnome-icon-theme
-    pkgs.openssl
+    curl
+    gnome-icon-theme
+    openssl
   ];
 
   buildInputs = [
-    # pkgs.exhale            # 1.2.0 - https://gitlab.com/ecodis/exhale
-    pkgs.faac # 1.30 - https://github.com/knik0/faac
-    pkgs.faad2 # 2.10.0 - https://github.com/knik0/faad2
-    pkgs.fdk_aac # 2.0.3 - https://sourceforge.net/projects/opencore-amr/files/fdk-aac
-    pkgs.ffmpeg # 7.1 - https://ffmpeg.org/releases
-    pkgs.flac # 1.4.3 - https://ftp.osuosl.org/pub/xiph/releases/flac
-    pkgs.lame # 3.100 - https://sourceforge.net/projects/lame/files/lame
-    pkgs.libcdio # 2.1.0 - https://ftp.gnu.org/gnu/libcdio/
-    pkgs.libcdio-paranoia # 10.2+2.0.1 - https://ftp.gnu.org/gnu/libcdio
-    # pkgs.libcdrip # 2.4a - http://cdrip.org/releases/
-    pkgs.libogg # 1.3.5 - https://ftp.osuosl.org/pub/xiph/releases/ogg
-    pkgs.libopus # 1.5.2 - https://ftp.osuosl.org/pub/xiph/releases/opus
-    pkgs.libsamplerate # 0.2.2 - https://github.com/libsndfile/libsamplerate
-    pkgs.libsndfile # 1.2.2 - https://github.com/libsndfile/libsndfile
-    pkgs.libvorbis # 1.3.7 - https://ftp.osuosl.org/pub/xiph/releases/vorbis
-    # pkgs.mac # 10.82 - https://freac.org/patches
-    pkgs.monkeysAudio # 10.82 - https://freac.org/patches
-    pkgs.mp4v2 # 2.1.3 - https://github.com/enzo1982/mp4v2
-    pkgs.mpg123 # 32.9 - https://mpg123.org/download
-    # pkgs.musepack # 4.75 - https://files.musepack.net/source
-    pkgs.rnnoise # 9acc1e5 - https://codeload.github.com/xiph/rnnoise
-    pkgs.rubberband # 1.8.2 - https://breakfastquay.com/files/releases
-    pkgs.speex # 1.2.1 - https://ftp.osuosl.org/pub/xiph/releases/speex
-    pkgs.wavpack # 5.7.0 -https://www.wavpack.com/
+    # exhale # 1.2.0 - https://gitlab.com/ecodis/exhale
+    faac # 1.30 - https://github.com/knik0/faac
+    faad2 # 2.10.0 - https://github.com/knik0/faad2
+    fdk_aac # 2.0.3 - https://sourceforge.net/projects/opencore-amr/files/fdk-aac
+    ffmpeg # 7.1 - https://ffmpeg.org/releases
+    flac # 1.4.3 - https://ftp.osuosl.org/pub/xiph/releases/flac
+    lame # 3.100 - https://sourceforge.net/projects/lame/files/lame
+    libcdio # 2.1.0 - https://ftp.gnu.org/gnu/libcdio/
+    libcdio-paranoia # 10.2+2.0.1 - https://ftp.gnu.org/gnu/libcdio
+    # libcdrip # 2.4a - http://cdrip.org/releases/
+    libogg # 1.3.5 - https://ftp.osuosl.org/pub/xiph/releases/ogg
+    libopus # 1.5.2 - https://ftp.osuosl.org/pub/xiph/releases/opus
+    libsamplerate # 0.2.2 - https://github.com/libsndfile/libsamplerate
+    libsndfile # 1.2.2 - https://github.com/libsndfile/libsndfile
+    libvorbis # 1.3.7 - https://ftp.osuosl.org/pub/xiph/releases/vorbis
+    # mac # 10.82 - https://freac.org/patches
+    monkeysAudio # 10.82 - https://freac.org/patches
+    mp4v2 # 2.1.3 - https://github.com/enzo1982/mp4v2
+    mpg123 # 32.9 - https://mpg123.org/download
+    # musepack # 4.75 - https://files.musepack.net/source
+    rnnoise # 9acc1e5 - https://codeload.github.com/xiph/rnnoise
+    rubberband # 1.8.2 - https://breakfastquay.com/files/releases
+    speex # 1.2.1 - https://ftp.osuosl.org/pub/xiph/releases/speex
+    wavpack # 5.7.0 -https://www.wavpack.com/
   ];
   # TODO: Conditionally include per platform/system deps.
-  # ++ (lib.optional stdenv.hostPlatform.isDarwin pkgs.wavpack)
-  # ++ (lib.optional stdenv.hostPlatform.isDarwin pkgs.wavpack);
+  # ++ (lib.optional stdenv.hostPlatform.isDarwin wavpack)
 
   makeFlags = [
     "prefix=$(out)"
